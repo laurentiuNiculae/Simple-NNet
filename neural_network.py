@@ -26,8 +26,8 @@ def mse(predictions, targets):
 
 class NeuralNetwork:
     def __init__(self, arch: "list[int]"):
-        self.biases = [np.array([0])] + [np.random.normal(0, 1, arch[i]) for i in range(1, len(arch))]
-        self.weights = [np.array([0])] + [np.random.normal(0, 1, (arch[i], arch[i+1])) for i in range(len(arch)-1)]
+        self.biases = [np.array([0])] + [np.random.normal(0, 1, arch[i])/5 for i in range(1, len(arch))]
+        self.weights = [np.array([0])] + [np.random.normal(0, 1, (arch[i], arch[i+1]))/2 for i in range(len(arch)-1)]
 
         # self.weights[1][0][0] = -3
         # self.weights[1][0][1] = 6
@@ -83,7 +83,7 @@ class NeuralNetwork:
 
     def learn(self, inputs: "list[np.ndarray]", expected: "list[np.ndarray]", learning_rate = 0.001, epochs = 500,
               batch_size = 500):
-        cost_print_interval = 2
+        # cost_print_interval = 1
 
         for epoch in range(epochs):
             average_cost = 0.0
@@ -92,18 +92,11 @@ class NeuralNetwork:
                 predicted = self.feed_forward(X)
                 self.back_propagate(expected[i], learning_rate)
 
-                if epoch % cost_print_interval == 0:
-                    average_cost += cross_entropy(predicted, expected[i])
+            #     if epoch % cost_print_interval == 0:
+            #         average_cost += cross_entropy(predicted, expected[i])
             
-            if epoch % cost_print_interval == 0:
-                correct = 0
-                for i in np.random.choice(len(inputs), batch_size):
-                    X = inputs[i]
-                    predicted = self.feed_forward(X)
-                    if np.argmax(predicted) == np.argmax(expected[i]):
-                        correct += 1
-                
-                print(f"Cost {average_cost/batch_size:.5f} Accuracy {correct/batch_size:.3f} Epoch {epoch}")
+            # if epoch % cost_print_interval == 0:    
+            #     print(f"Cost {average_cost/batch_size:.5f} Epoch {epoch}")
         
 
 

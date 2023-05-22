@@ -6,7 +6,7 @@ import random
 from neural_network import NeuralNetwork
 
 if __name__ == "__main__":
-    mnist_nn = NeuralNetwork([28*28, 100, 10])
+    mnist_nn = NeuralNetwork([28*28, 30, 10])
 
     f = gzip.open('mnist.pkl.gz', 'rb')
     train_set, valid_set, test_set = pickle.load(f, encoding='latin1')
