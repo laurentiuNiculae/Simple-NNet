@@ -31,7 +31,7 @@ if __name__ == "__main__":
     pygame.draw.rect(cost_graph, (255, 255, 255), (0, 0, graph_width, graph_height), width = 1)
 
     # Init neural network XOR
-    # xor_nn = NeuralNetwork([2, 10, 10, 1])
+    # xor_nn = NeuralNetwork([2, 2, 1])
     # train_input = np.array([
     #     [0, 0],
     #     [1, 0],
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     #     [1],
     #     [0],
     #     [0],
-    #     [0.5],
+    #     [1],
     # ])
 
     # -------------------------------------
@@ -65,7 +65,7 @@ if __name__ == "__main__":
     # train_answer = train_answer[:3000]
 
     # -------------------------------------
-    interesting_nn = NeuralNetwork([2, 10, 1])
+    interesting_nn = NeuralNetwork([2, 10, 10, 5, 1])
 
     img = pygame.image.load("nine.jpg")
     img_buff = np.max(pygame.surfarray.array3d(img), axis=2)
@@ -86,8 +86,9 @@ if __name__ == "__main__":
     # Parameters
     epoch = 0
     epochs= 10000
-    learning_rate = 0.02
-    cost_print_interval = 10
+    batch_size = 500
+    learning_rate = 0.2
+    cost_print_interval = 30
     cost_plot_points = []
     cost_plot_min = None
     cost_plot_max = None
@@ -101,8 +102,8 @@ if __name__ == "__main__":
 
         average_cost = 0.0
 
-        #for i in np.random.choice(len(train_input), batch_size):
-        for i in range(0, len(train_input), 2):
+        for i in np.random.choice(len(train_input), batch_size):
+        #for i in range(0, len(train_input), 2):
             X = train_input[i]
             predicted = interesting_nn.feed_forward(X)
             interesting_nn.back_propagate(train_answer[i], learning_rate)
@@ -112,7 +113,7 @@ if __name__ == "__main__":
         
         if epoch % 10 == 0:
             cost = average_cost/len(train_input)
-            cost_plot_points.append(cost)
+            #cost_plot_points.append(cost)
 
         if cost_plot_min is None or cost_plot_min < cost:
             cost_plot_min = cost 
@@ -136,23 +137,22 @@ if __name__ == "__main__":
         out_rez = 50
         output_img_buff = np.zeros((out_rez, out_rez, 3))
 
-        # if epoch % cost_print_interval == -1:
-        #     for i in range(out_rez):
-        #         for j in range(out_rez):
-        #             r = interesting_nn.feed_forward(np.array([i/out_rez, j/out_rez]))
-        #             output_img_buff[i, j, 0] = output_img_buff[i, j, 1] = output_img_buff[i, j, 2] = r[0]
+        if epoch % cost_print_interval == 0:
+            for i in range(out_rez):
+                for j in range(out_rez):
+                    r = interesting_nn.feed_forward(np.array([i/out_rez, j/out_rez]))
+                    output_img_buff[i, j, 0] = output_img_buff[i, j, 1] = output_img_buff[i, j, 2] = r[0]
 
-        #     output_img_buff = (output_img_buff*255)
+            output_img_buff = (output_img_buff*255)
 
-        #     output_img = pygame.surfarray.make_surface(output_img_buff)
-        #     output_img = pygame.transform.scale(output_img, (250, 250))
+            output_img = pygame.surfarray.make_surface(output_img_buff)
+            output_img = pygame.transform.scale(output_img, (500, 500))
 
-        #     out_img_rect = output_img.get_rect(midleft = (50 + graph_width + 50 , screen.get_height()//2))
-        #     pygame.draw.rect(output_img, (255, 255, 255), (0 , 0, *output_img.get_size()), width=1)
+            out_img_rect = output_img.get_rect(center = (graph_width + 50 , screen.get_height()//2))
+            pygame.draw.rect(output_img, (255, 255, 255), (0 , 0, *output_img.get_size()), width=1)
 
-        #     screen.blit(output_img, out_img_rect)
+            screen.blit(output_img, out_img_rect)
 
-        screen.blit(cost_graph, cost_graph_rect)
+        # screen.blit(cost_graph, cost_graph_rect)
 
         pygame.display.update()
-        epoch += 1

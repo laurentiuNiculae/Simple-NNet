@@ -26,16 +26,8 @@ def mse(predictions, targets):
 
 class NeuralNetwork:
     def __init__(self, arch: "list[int]"):
-        self.biases = [np.array([0])] + [np.random.normal(0, 1, arch[i])/5 for i in range(1, len(arch))]
+        self.biases = [np.array([0])] + [np.random.normal(0, 1, arch[i])/2 for i in range(1, len(arch))]
         self.weights = [np.array([0])] + [np.random.normal(0, 1, (arch[i], arch[i+1]))/2 for i in range(len(arch)-1)]
-
-        # self.weights[1][0][0] = -3
-        # self.weights[1][0][1] = 6
-        # self.weights[1][1][0] = 1
-        # self.weights[1][1][1] = -2
-
-        # self.weights[2][0][0] = 8
-        # self.weights[2][1][0] = 4
 
         self.y = [np.array([0])] + [np.zeros(arch[i], dtype=np.float32) for i in range(1, len(arch))]
         self.error = [np.array([0])] + [np.zeros(arch[i], dtype=np.float32) for i in range(len(arch)-1)]
